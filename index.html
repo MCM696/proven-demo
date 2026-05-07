@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Proven — Private Professional Network</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B2A;--navy-mid:#1E2F45;
+  --gold:#C9A84C;--gold-light:#E8C97A;
+  --cream:#F5F0E8;--cream-dark:#EDE6D6;
+  --white:#ffffff;
+  --text-primary:#0D1B2A;--text-secondary:#4A5568;--text-muted:#718096;
+  --border:rgba(13,27,42,0.12);--radius:12px;--radius-sm:8px;
+  --bottom-nav-h:64px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream);color:var(--text-primary);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
+
+/* ── SCREENS ── */
+.page{display:none;position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--cream)}
+.page.active{display:block}
+
+/* ── LANDING ── */
+#pg-landing{background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 24px 40px;overflow-y:auto}
+.landing-logo{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:600}
+.landing-rule{width:36px;height:1px;background:rgba(201,168,76,0.4);margin:0 auto 28px}
+.landing-h{font-size:32px;font-weight:700;color:white;line-height:1.2;margin-bottom:14px;letter-spacing:-0.02em}
+.landing-h span{color:var(--gold)}
+.landing-sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:36px;line-height:1.7}
+.landing-cta{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;margin:0 auto 48px}
+.btn-land-primary{background:var(--gold);color:var(--navy);border:none;padding:15px;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em}
+.btn-land-secondary{background:transparent;color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.2);padding:15px;border-radius:var(--radius-sm);font-size:15px;font-weight:500;cursor:pointer;font-family:inherit}
+.landing-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;max-width:360px;margin:0 auto}
+.lstat-val{font-size:22px;font-weight:700;color:var(--gold)}
+.lstat-lbl{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px}
+
+/* ── ONBOARDING ── */
+#pg-onboarding{background:var(--cream);padding:24px 20px 40px}
+.ob-logo{font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:24px}
+.ob-logo span{color:var(--gold)}
+.step-bar{display:flex;gap:6px;margin-bottom:24px}
+.step-dot{height:4px;border-radius:2px;flex:1;background:var(--cream-dark);transition:background 0.3s}
+.step-dot.done{background:var(--gold)}
+.ob-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.ob-sub{font-size:13px;color:var(--text-muted);margin-bottom:20px}
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.opt-chip{padding:11px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;text-align:center;background:white;color:var(--text-secondary);font-family:inherit;transition:all 0.15s}
+.opt-chip.sel{border-color:var(--gold);background:rgba(201,168,76,0.08);color:var(--navy);font-weight:500}
+.ob-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.form-grp{margin-bottom:14px}
+.form-lbl{font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:5px;display:block}
+.form-inp,.form-sel,.form-ta{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;outline:none;background:white;color:var(--text-primary);-webkit-appearance:none}
+.form-inp:focus,.form-sel:focus,.form-ta:focus{border-color:var(--gold)}
+.form-ta{resize:vertical;min-height:80px}
+
+/* ── APP SHELL ── */
+#pg-app{background:var(--cream);padding-bottom:var(--bottom-nav-h)}
+
+/* TOP BAR */
+.topbar{background:white;border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:15px;font-weight:700;color:var(--navy)}
+.topbar-wordmark{font-size:14px;font-weight:700;letter-spacing:0.1em;color:var(--gold);text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.tbar-btn{background:var(--navy);color:var(--gold);border:none;border-radius:var(--radius-sm);padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:var(--navy);display:flex;align-items:stretch;z-index:100;border-top:1px solid rgba(255,255,255,0.08);padding-bottom:env(safe-area-inset-bottom)}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.4);border:none;background:none;font-family:inherit;padding:6px 4px;position:relative;gap:3px;transition:color 0.15s}
+.bnav-item.active{color:var(--gold)}
+.bnav-icon{font-size:20px;line-height:1}
+.bnav-label{font-size:9px;letter-spacing:0.04em;text-transform:uppercase;font-weight:500}
+.bnav-badge{position:absolute;top:6px;right:calc(50% - 16px);background:var(--gold);color:var(--navy);font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
+
+/* CONTENT AREA */
+.content{padding:16px}
+
+/* SCREENS WITHIN APP */
+.ascreen{display:none}
+.ascreen.active{display:block}
+
+/* ── CARDS ── */
+.card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:12px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:12px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:white;color:var(--text-primary);font-family:inherit;transition:all 0.15s}
+.btn-primary{background:var(--navy);color:var(--gold);border-color:var(--navy)}
+.btn-gold{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:600}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-ghost{border-color:transparent;background:transparent}
+.btn-full{width:100%;justify-content:center}
+
+/* ── TAGS ── */
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;background:var(--cream);color:var(--text-secondary);border:1px solid var(--cream-dark)}
+.tag-gold{background:rgba(201,168,76,0.12);color:#8B6914;border-color:rgba(201,168,76,0.3)}
+.tag-navy{background:rgba(13,27,42,0.06);color:var(--navy);border-color:rgba(13,27,42,0.12)}
+.tag-green{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97}
+.tag-blue{background:#E6F1FB;color:#185FA5;border-color:#B5D4F4}
+
+/* ── STATS ROW ── */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:14px}
+.stat-val{font-size:22px;font-weight:700}
+.stat-lbl{font-size:10px;color:var(--text-muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.05em}
+.stat-delta{font-size:11px;color:#48BB78;font-weight:500;margin-top:4px}
+
+/* ── OPP CARDS ── */
+.opp-card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color 0.15s}
+.opp-card:active{border-color:var(--gold)}
+.opp-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.opp-icon{width:34px;height:34px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.opp-title{font-size:14px;font-weight:600;line-height:1.3}
+.opp-co{font-size:12px;color:var(--text-muted);margin-top:2px}
+.opp-desc{font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px}
+.opp-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.opp-meta{display:flex;flex-wrap:wrap;gap:8px}
+.opp-meta-item{font-size:11px;color:var(--text-muted)}
+
+/* ── MEMBER ROW ── */
+.member-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.member-row:last-child{border-bottom:none;padding-bottom:0}
+.member-name{font-size:13px;font-weight:500}
+.member-hl{font-size:11px;color:var(--text-muted)}
+.member-score{margin-left:auto;font-size:11px;font-weight:600;color:var(--gold);background:rgba(201,168,76,0.1);padding:3px 8px;border-radius:10px;white-space:nowrap}
+
+/* ── AVATAR ── */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0}
+.av-lg{width:56px;height:56px;font-size:18px}
+.av-md{width:36px;height:36px;font-size:13px}
+.av-sm{width:28px;height:28px;font-size:10px}
+.av-xs{width:22px;height:22px;font-size:9px}
+
+/* ── PROFILE ── */
+.profile-hero{background:var(--navy);border-radius:var(--radius);padding:20px;color:white;margin-bottom:14px}
+.ph-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.ph-name{font-size:18px;font-weight:700;color:white;line-height:1.2}
+.ph-hl{font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;line-height:1.4}
+.ph-loc{font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px}
+.ph-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ph-badge{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:10px;padding:3px 9px;border-radius:20px}
+.ph-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1)}
+.ph-stat-val{font-size:18px;font-weight:700;color:var(--gold)}
+.ph-stat-lbl{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px}
+.score-box{text-align:right}
+.score-num{font-size:22px;font-weight:700;color:var(--gold)}
+.score-lbl{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.07em}
+.score-pct{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px}
+
+/* ── EXP ── */
+.exp-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.exp-item:last-child{border-bottom:none}
+.exp-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+.exp-title{font-size:13px;font-weight:600}
+.exp-co{font-size:12px;color:var(--text-muted);margin-top:2px}
+.exp-yrs{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.exp-impact{font-size:12px;color:var(--text-secondary);margin-top:5px;line-height:1.5}
+
+/* ── INTROS ── */
+.tab-row{display:flex;gap:4px;margin-bottom:16px;background:var(--cream);border-radius:var(--radius-sm);padding:4px;border:1px solid var(--cream-dark)}
+.tab-btn{flex:1;padding:8px 6px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;color:var(--text-muted);border:none;background:transparent;font-family:inherit;transition:all 0.15s}
+.tab-btn.active{background:white;color:var(--text-primary);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.intro-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.intro-path{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.intro-arrow{color:var(--gold);font-size:14px}
+.iname{font-size:12px;font-weight:500}
+.irole{font-size:10px;color:var(--text-muted)}
+.intro-ctx{font-size:12px;color:var(--text-secondary);background:var(--cream);border-radius:var(--radius-sm);padding:10px 11px;margin-bottom:10px;line-height:1.6}
+.intro-status{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.istep{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px}
+.istep-done{background:#EAF3DE;color:#3B6D11}
+.istep-pend{background:#FAEEDA;color:#854F0B}
+.intro-actions{display:flex;gap:8px}
+
+/* ── CIRCLES ── */
+.circle-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer}
+.circle-card.joined{border-color:rgba(201,168,76,0.4)}
+.cc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cc-icon{width:38px;height:38px;border-radius:9px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--gold)}
+.cc-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.cc-desc{font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5}
+.cc-footer{display:flex;align-items:center;justify-content:space-between}
+.cc-avs{display:flex}
+.cc-av{width:20px;height:20px;border-radius:50%;border:2px solid white;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;margin-left:-5px}
+.cc-av:first-child{margin-left:0}
+.cc-cnt{font-size:11px;color:var(--text-muted);margin-left:7px}
+
+/* ── CONCIERGE ── */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 52px - var(--bottom-nav-h) - 1px)}
+.chat-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:white;flex-shrink:0}
+.chat-ai-av{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:15px;flex-shrink:0}
+.chat-ai-name{font-size:14px;font-weight:600}
+.chat-status{font-size:11px;color:#48BB78}
+.chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--cream)}
+.msg{display:flex;gap:8px;max-width:88%}
+.msg-user{align-self:flex-end;flex-direction:row-reverse}
+.msg-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.msg-bubble{padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.6}
+.msg-ai .msg-bubble{background:white;color:var(--text-primary);border-radius:4px 12px 12px 12px;border:1px solid var(--border)}
+.msg-user .msg-bubble{background:var(--navy);color:rgba(255,255,255,0.9);border-radius:12px 4px 12px 12px}
+.typing-dot{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:bounce 1.2s infinite;display:inline-block;margin:0 2px}
+.typing-dot:nth-child(2){animation-delay:0.2s}
+.typing-dot:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+.chat-input-area{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;background:white;flex-shrink:0}
+.chat-input{flex:1;padding:9px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none;font-family:inherit;resize:none;background:var(--cream);-webkit-appearance:none}
+.chat-input:focus{border-color:var(--gold);background:white}
+.send-btn{width:38px;height:38px;background:var(--navy);border:none;border-radius:var(--radius-sm);color:var(--gold);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quick-prompts{padding:10px 16px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;background:white;border-bottom:1px solid var(--border)}
+.quick-prompts::-webkit-scrollbar{display:none}
+.qprompt{white-space:nowrap;background:var(--cream);border:1px solid var(--cream-dark);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--text-secondary);flex-shrink:0}
+
+/* ── ADMIN ── */
+.admin-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.admin-stat{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.admin-stat-val{font-size:24px;font-weight:700;color:var(--navy)}
+.admin-stat-lbl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px}
+.pending-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.pending-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pending-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pending-actions{display:flex;gap:8px}
+
+/* ── API BANNER ── */
+.api-banner{background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:10px 12px;margin:12px 16px 0;display:flex;flex-direction:column;gap:8px;font-size:12px;color:#8B6914}
+.api-banner-row{display:flex;gap:8px}
+.api-banner input{flex:1;padding:7px 10px;border:1px solid rgba(201,168,76,0.4);border-radius:6px;font-size:13px;outline:none;background:white;color:var(--navy);font-family:inherit;-webkit-appearance:none}
+.api-banner button{background:var(--gold);color:var(--navy);border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,42,0.6);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:white;border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px;width:100%;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+.modal-handle{width:36px;height:4px;background:var(--cream-dark);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:5px}
+.modal-sub{font-size:13px;color:var(--text-muted);margin-bottom:18px}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-muted);padding:4px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ── DIVIDER ── */
+hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* ── STATUS DOT ── */
+.sdot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sdot-on{background:#48BB78}
+.sdot-off{background:#CBD5E0}
+
+/* ── SCORE BARS ── */
+.score-bar-wrap{display:flex;flex-direction:column;gap:8px}
+.score-bar-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.score-bar{height:4px;background:var(--cream-dark);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.score-bar-fill{height:100%;border-radius:2px}
+
+@media(min-width:700px){
+  .opt-grid{grid-template-columns:repeat(3,1fr)}
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .admin-stat-row{grid-template-columns:repeat(3,1fr)}
+  .modal-overlay{align-items:center}
+  .modal{border-radius:var(--radius);max-width:480px;padding-bottom:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ LANDING ════ -->
+<div class="page active" id="pg-landing">
+  <div style="min-height:100vh;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:56px 24px 40px;">
+    <div class="landing-logo">Proven</div>
+    <div class="landing-rule"></div>
+    <h1 class="landing-h">Your network should work as hard as <span>you have.</span></h1>
+    <p class="landing-sub">A private, AI-powered network for experienced professionals. Warm introductions, trusted circles, and the opportunities that never get posted.</p>
+    <div class="landing-cta">
+      <button class="btn-land-primary" onclick="showOnboarding()">Request Access</button>
+      <button class="btn-land-secondary" onclick="showApp()">Preview Demo &rarr;</button>
+    </div>
+    <div class="landing-stats">
+      <div><div class="lstat-val">60M+</div><div class="lstat-lbl">Underserved professionals</div></div>
+      <div><div class="lstat-val">80%</div><div class="lstat-lbl">Jobs via network</div></div>
+      <div><div class="lstat-val">32wks</div><div class="lstat-lbl">Avg search 45&ndash;54</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ONBOARDING ════ -->
+<div class="page" id="pg-onboarding">
+  <div style="padding:24px 20px 40px;max-width:520px;margin:0 auto;">
+    <div class="ob-logo">PRO<span>VEN</span></div>
+    <div class="step-bar"><div class="step-dot done" id="sd1"></div><div class="step-dot" id="sd2"></div><div class="step-dot" id="sd3"></div><div class="step-dot" id="sd4"></div></div>
+
+    <div id="ob1">
+      <div class="ob-title">Who referred you?</div>
+      <div class="ob-sub">Proven is invite-only. Every member is vouched.</div>
+      <div class="form-grp"><label class="form-lbl">Referral code or member name</label><input class="form-inp" placeholder="e.g. LCHEN-412"/></div>
+      <div class="form-grp"><label class="form-lbl">Your email</label><input class="form-inp" placeholder="you@example.com" type="email"/></div>
+      <div class="form-grp"><label class="form-lbl">Your full name</label><input class="form-inp" placeholder="Full name"/></div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="showLanding()">&larr; Back</button><button class="btn btn-gold" onclick="obGo(2)">Continue &rarr;</button></div>
+    </div>
+
+    <div id="ob2" style="display:none">
+      <div class="ob-title">Your career identity</div>
+      <div class="ob-sub">Not a r&eacute;sum&eacute; &mdash; a living professional profile.</div>
+      <div class="form-grp"><label class="form-lbl">Most recent title</label><input class="form-inp" placeholder="e.g. Chief Marketing Officer"/></div>
+      <div class="form-grp"><label class="form-lbl">Professional headline</label><input class="form-inp" placeholder="Former CMO &middot; Board Advisor &middot; Fractional"/></div>
+      <div class="form-grp"><label class="form-lbl">Your domains</label>
+        <div class="opt-grid">
+          <div class="opt-chip" onclick="toggleChip(this)">Healthcare</div>
+          <div class="opt-chip" onclick="toggleChip(this)">FinTech</div>
+          <div class="opt-chip" onclick="toggleChip(this)">Consumer</div>
+          <div class="opt-chip" onclick="toggleChip(this)">Enterprise SaaS</div>
+          <div class="opt-chip" onclick="toggleChip(this)">Private Equity</div>
+          <div class="opt-chip" onclick="toggleChip(this)">Retail</div>
+        </div>
+      </div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obGo(1)">&larr; Back</button><button class="btn btn-gold" onclick="obGo(3)">Continue &rarr;</button></div>
+    </div>
+
+    <div id="ob3" style="display:none">
+      <div class="ob-title">What are you open to?</div>
+      <div class="ob-sub">We surface only what fits. No noise.</div>
+      <div class="opt-grid">
+        <div class="opt-chip" onclick="toggleChip(this)">Board seat</div>
+        <div class="opt-chip" onclick="toggleChip(this)">Fractional role</div>
+        <div class="opt-chip" onclick="toggleChip(this)">Advisory</div>
+        <div class="opt-chip" onclick="toggleChip(this)">Full-time C-suite</div>
+        <div class="opt-chip" onclick="toggleChip(this)">Consulting</div>
+        <div class="opt-chip" onclick="toggleChip(this)">Peer networking</div>
+      </div>
+      <div class="form-grp" style="margin-top:12px"><label class="form-lbl">What&rsquo;s next for you?</label><textarea class="form-ta" placeholder="e.g. Looking to take 2&ndash;3 advisory roles in health-tech after 20 years building consumer brands..."></textarea></div>
+      <div class="ob-nav"><button class="btn btn-ghost" onclick="obGo(2)">&larr; Back</button><button class="btn btn-gold" onclick="obGo(4)">Continue &rarr;</button></div>
+    </div>
+
+    <div id="ob4" style="display:none">
+      <div style="text-align:center;padding:16px 0 24px;">
+        <div style="font-size:36px;margin-bottom:14px;">&#10022;</div>
+        <div class="ob-title">You&rsquo;re in.</div>
+        <div class="ob-sub" style="margin-bottom:20px;">Founding member access unlocked for 6 months.</div>
+        <div style="background:var(--cream);border-radius:var(--radius);padding:14px;text-align:left;margin-bottom:20px;">
+          <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Your founding member benefits</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:2.2;">&#10003; &nbsp;6 months complimentary access<br>&#10003; &nbsp;Priority circle placement<br>&#10003; &nbsp;Direct concierge onboarding<br>&#10003; &nbsp;3 referral credits</div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="showApp()">Enter Proven &rarr;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div class="page" id="pg-app">
+  <div class="topbar">
+    <div class="topbar-wordmark">Proven</div>
+    <div class="topbar-right">
+      <span style="font-size:10px;color:var(--text-muted);">483 members</span>
+      <button class="tbar-btn" onclick="openModal('m-invite')">+ Invite</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="ascreen active" id="as-home">
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-val">7</div><div class="stat-lbl">Opportunities</div><div class="stat-delta">&#8593; 3 this week</div></div>
+        <div class="stat-card"><div class="stat-val">3</div><div class="stat-lbl">Pending Intros</div><div class="stat-delta">2 need you</div></div>
+        <div class="stat-card"><div class="stat-val">2</div><div class="stat-lbl">My Circles</div><div class="stat-delta">12 peers</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--gold)">847</div><div class="stat-lbl">Trust Score</div><div class="stat-delta">Top 12%</div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:15px;font-weight:600;">Opportunity Flow</div>
+        <button class="btn btn-sm" onclick="switchTab('opportunities')">View all</button>
+      </div>
+
+      <div class="opp-card" onclick="openModal('m-opp')">
+        <div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#8859;</div><div style="min-width:0;"><div class="opp-title">Board Director &mdash; Audit Chair</div><div class="opp-co">Series C HealthTech &middot; Confidential</div></div></div><span class="tag tag-gold" style="flex-shrink:0;">Board</span></div>
+        <div class="opp-desc">Seeking an experienced CFO for a 60-person digital health company preparing for Series D. 4 meetings/year. Equity only.</div>
+        <div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; SF / Remote</span><span class="opp-meta-item">&#10022; Equity</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div>
+      </div>
+
+      <div class="opp-card" onclick="openModal('m-opp')">
+        <div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#9672;</div><div style="min-width:0;"><div class="opp-title">Fractional CMO &middot; 2 days/week</div><div class="opp-co">Consumer Wellness Brand &middot; NYC</div></div></div><span class="tag tag-blue" style="flex-shrink:0;">Fractional</span></div>
+        <div class="opp-desc">DTC brand (3M ARR) needs a seasoned CMO to own brand strategy and retail expansion into 400 doors.</div>
+        <div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; New York</span><span class="opp-meta-item">&#10022; $12&ndash;18K/mo</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div>
+      </div>
+
+      <div class="opp-card" onclick="openModal('m-opp')">
+        <div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#9678;</div><div style="min-width:0;"><div class="opp-title">Strategic Advisor &middot; FinTech</div><div class="opp-co">Stealth &middot; Series B &middot; Chicago</div></div></div><span class="tag tag-navy" style="flex-shrink:0;">Advisory</span></div>
+        <div class="opp-desc">Payments startup seeks advisor with banking relationships. 5&ndash;10hrs/month. 0.25% equity.</div>
+        <div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; Remote</span><span class="opp-meta-item">&#10022; 0.25% equity</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div>
+      </div>
+
+      <div class="card" style="margin-top:4px;">
+        <div class="card-hdr"><div class="card-title" style="margin:0;">Members to Know</div></div>
+        <div class="member-row"><div class="av av-md" style="background:#E6F1FB;color:#185FA5;">LC</div><div><div class="member-name">Lawrence Chen</div><div class="member-hl">Former VP &middot; Goldman &middot; PE Advisor</div></div><span class="member-score">921</span></div>
+        <div class="member-row"><div class="av av-md" style="background:#EAF3DE;color:#3B6D11;">SR</div><div><div class="member-name">Susan Reyes</div><div class="member-hl">CHRO &middot; Fortune 500 &middot; Board</div></div><span class="member-score">884</span></div>
+        <div class="member-row"><div class="av av-md" style="background:#FAEEDA;color:#854F0B;">DM</div><div><div class="member-name">David Marsh</div><div class="member-hl">Ex-McKinsey &middot; Fractional COO</div></div><span class="member-score">856</span></div>
+        <div class="member-row" style="border-bottom:none;padding-bottom:0"><div class="av av-md" style="background:#FBEAF0;color:#993556;">PK</div><div><div class="member-name">Priya Kumar</div><div class="member-hl">CTO &middot; 2 Exits &middot; AI Advisor</div></div><span class="member-score">812</span></div>
+        <button class="btn btn-full" style="margin-top:12px;" onclick="openModal('m-intro-req')">Request an Introduction &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPPORTUNITIES -->
+  <div class="ascreen" id="as-opportunities">
+    <div class="content">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
+        <span class="tag tag-gold">All (7)</span><span class="tag">Board (2)</span><span class="tag">Fractional (3)</span><span class="tag">Advisory (2)</span>
+        <button class="btn btn-gold btn-sm" style="margin-left:auto;" onclick="openModal('m-post-opp')">+ Post</button>
+      </div>
+      <div class="opp-card" onclick="openModal('m-opp')"><div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#8859;</div><div><div class="opp-title">Board Director &mdash; Audit Chair</div><div class="opp-co">Series C HealthTech &middot; Confidential</div></div></div><span class="tag tag-gold" style="flex-shrink:0;">Board</span></div><div class="opp-desc">60-person digital health co. preparing for Series D. 4 meetings/year. Board equity grant + D&O insurance.</div><div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; SF/Remote</span><span class="opp-meta-item">&#10022; Equity</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div></div>
+      <div class="opp-card" onclick="openModal('m-opp')"><div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#9672;</div><div><div class="opp-title">Fractional CMO &middot; 2 days/wk</div><div class="opp-co">Consumer Wellness &middot; NYC</div></div></div><span class="tag tag-blue" style="flex-shrink:0;">Fractional</span></div><div class="opp-desc">DTC brand (3M ARR) scaling to 10M needs brand strategy and retail expansion ownership.</div><div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; New York</span><span class="opp-meta-item">&#10022; $12&ndash;18K/mo</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div></div>
+      <div class="opp-card" onclick="openModal('m-opp')"><div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#9678;</div><div><div class="opp-title">Strategic Advisor &middot; FinTech</div><div class="opp-co">Stealth &middot; Series B &middot; Chicago</div></div></div><span class="tag tag-navy" style="flex-shrink:0;">Advisory</span></div><div class="opp-desc">Payments infrastructure startup. Banking relationships + regulatory experience needed. 5&ndash;10hrs/month.</div><div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; Remote</span><span class="opp-meta-item">&#10022; 0.25% equity</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div></div>
+      <div class="opp-card" onclick="openModal('m-opp')"><div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#9673;</div><div><div class="opp-title">Fractional CFO &middot; Series A SaaS</div><div class="opp-co">Enterprise SaaS &middot; Boston</div></div></div><span class="tag tag-blue" style="flex-shrink:0;">Fractional</span></div><div class="opp-desc">SaaS at $4M ARR needs FP&A leadership and Series B prep. 3 days/week for 6 months.</div><div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; Boston/Remote</span><span class="opp-meta-item">&#10022; $15K/mo</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div></div>
+      <div class="opp-card" onclick="openModal('m-opp')"><div class="opp-hdr"><div style="display:flex;gap:8px;align-items:flex-start;flex:1;min-width:0;"><div class="opp-icon">&#8859;</div><div><div class="opp-title">Independent Board Director</div><div class="opp-co">PE-backed Retail &middot; Midwest</div></div></div><span class="tag tag-gold" style="flex-shrink:0;">Board</span></div><div class="opp-desc">PE firm seeks operator with consumer/retail background. P&L ownership at $500M+ preferred.</div><div class="opp-footer"><div class="opp-meta"><span class="opp-meta-item">&#10009; Chicago</span><span class="opp-meta-item">&#10022; $75K + equity</span></div><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openModal('m-interest')">Express Interest</button></div></div>
+    </div>
+  </div>
+
+  <!-- INTROS -->
+  <div class="ascreen" id="as-intros">
+    <div class="content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--text-muted);">Double opt-in only. Zero cold outreach.</div>
+        <button class="btn btn-gold btn-sm" onclick="openModal('m-intro-req')">+ Request</button>
+      </div>
+      <div class="tab-row">
+        <button class="tab-btn active" onclick="switchIntroTab('incoming',this)">Incoming (2)</button>
+        <button class="tab-btn" onclick="switchIntroTab('outgoing',this)">Outgoing (1)</button>
+        <button class="tab-btn" onclick="switchIntroTab('completed',this)">Done (4)</button>
+      </div>
+      <div id="it-incoming">
+        <div class="intro-card">
+          <div class="intro-path">
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:#E6F1FB;color:#185FA5;">LC</div><div><div class="iname">Lawrence Chen</div><div class="irole">Former VP Goldman</div></div></div>
+            <span class="intro-arrow">&rarr;</span>
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:#EAF3DE;color:#3B6D11;">SR</div><div><div class="iname">Susan Reyes</div><div class="irole">connector</div></div></div>
+            <span class="intro-arrow">&rarr;</span>
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:var(--gold);color:var(--navy);">MK</div><div><div class="iname">You</div></div></div>
+          </div>
+          <div class="intro-ctx">&ldquo;Lawrence is advising a HealthTech looking for an audit chair. Your background at Deloitte + current board seat make this a natural fit.&rdquo; &mdash; Susan R.</div>
+          <div class="intro-status"><span class="istep istep-done">&#10003; Lawrence confirmed</span><span class="istep istep-pend">&#8987; Awaiting you</span></div>
+          <div class="intro-actions"><button class="btn btn-sm" onclick="this.closest('.intro-card').style.opacity='0.4'">Decline</button><button class="btn btn-sm btn-gold" onclick="acceptIntro(this)">Accept Intro</button></div>
+        </div>
+        <div class="intro-card">
+          <div class="intro-path">
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:#FAEEDA;color:#854F0B;">DM</div><div><div class="iname">David Marsh</div><div class="irole">Fractional COO</div></div></div>
+            <span class="intro-arrow">&rarr;</span>
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:#FBEAF0;color:#993556;">PK</div><div><div class="iname">Priya Kumar</div><div class="irole">connector</div></div></div>
+            <span class="intro-arrow">&rarr;</span>
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:var(--gold);color:var(--navy);">MK</div><div><div class="iname">You</div></div></div>
+          </div>
+          <div class="intro-ctx">&ldquo;David is building an operator syndicate for a PE portfolio company. They need consumer brand experience at the board level.&rdquo; &mdash; Priya K.</div>
+          <div class="intro-status"><span class="istep istep-done">&#10003; David confirmed</span><span class="istep istep-pend">&#8987; Awaiting you</span></div>
+          <div class="intro-actions"><button class="btn btn-sm" onclick="this.closest('.intro-card').style.opacity='0.4'">Decline</button><button class="btn btn-sm btn-gold" onclick="acceptIntro(this)">Accept Intro</button></div>
+        </div>
+      </div>
+      <div id="it-outgoing" style="display:none">
+        <div class="intro-card">
+          <div class="intro-path">
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:var(--gold);color:var(--navy);">MK</div><div><div class="iname">You</div></div></div>
+            <span class="intro-arrow">&rarr;</span>
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:#E6F1FB;color:#185FA5;">SR</div><div><div class="iname">Susan Reyes</div><div class="irole">connector</div></div></div>
+            <span class="intro-arrow">&rarr;</span>
+            <div style="display:flex;align-items:center;gap:5px;"><div class="av av-sm" style="background:#EAF3DE;color:#3B6D11;">JW</div><div><div class="iname">James Wu</div><div class="irole">Blackstone MD</div></div></div>
+          </div>
+          <div class="intro-ctx">Exploring advisory relationships with PE firms in consumer and retail.</div>
+          <div class="intro-status"><span class="istep istep-done">&#10003; You confirmed</span><span class="istep istep-done">&#10003; Susan accepted</span><span class="istep istep-pend">&#8987; Awaiting James</span></div>
+        </div>
+      </div>
+      <div id="it-completed" style="display:none">
+        <div style="text-align:center;padding:32px 16px;background:white;border-radius:var(--radius);border:1px solid var(--border);">
+          <div style="font-size:26px;margin-bottom:10px;">&#10003;</div>
+          <div style="font-size:13px;color:var(--text-muted);">4 successful introductions through Proven.<br><span style="color:var(--gold);font-weight:500;">2 active relationships</span> &middot; 1 board engagement in progress</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIRCLES -->
+  <div class="ascreen" id="as-circles">
+    <div class="content">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.6;">Curated peer groups of 8&ndash;12 professionals. Share unposted opportunities, give references, hold each other accountable.</div>
+      <div class="circle-card joined">
+        <div class="cc-top"><div class="cc-icon">&#8859;</div><span class="tag tag-green">Joined</span></div>
+        <div class="cc-name">HealthTech CFOs</div>
+        <div class="cc-desc">Senior finance leaders in digital health. Peer deal review, comp benchmarks, and board referrals.</div>
+        <div class="cc-footer"><div style="display:flex;align-items:center;"><div class="cc-avs"><div class="cc-av" style="background:#E6F1FB;color:#185FA5;">LC</div><div class="cc-av" style="background:#EAF3DE;color:#3B6D11;">SR</div><div class="cc-av" style="background:#FAEEDA;color:#854F0B;">DM</div><div class="cc-av" style="background:var(--cream);color:var(--navy);">+8</div></div><span class="cc-cnt">11/12</span></div><button class="btn btn-sm btn-primary">Enter &rarr;</button></div>
+      </div>
+      <div class="circle-card joined">
+        <div class="cc-top"><div class="cc-icon">&#9678;</div><span class="tag tag-green">Joined</span></div>
+        <div class="cc-name">Consumer CMO Network</div>
+        <div class="cc-desc">CMO alumni from Fortune 500 consumer brands. Fractional opps, brand partnerships, reference exchanges.</div>
+        <div class="cc-footer"><div style="display:flex;align-items:center;"><div class="cc-avs"><div class="cc-av" style="background:#FBEAF0;color:#993556;">AB</div><div class="cc-av" style="background:#E6F1FB;color:#185FA5;">CK</div><div class="cc-av" style="background:var(--cream);color:var(--navy);">+7</div></div><span class="cc-cnt">9/12</span></div><button class="btn btn-sm btn-primary">Enter &rarr;</button></div>
+      </div>
+      <div class="circle-card">
+        <div class="cc-top"><div class="cc-icon">&#9672;</div><span class="tag tag-gold">Premium</span></div>
+        <div class="cc-name">PE & Growth Equity Operators</div>
+        <div class="cc-desc">Former PE-backed CEOs. Board readiness, deal flow from sponsors, and operating partner relationships.</div>
+        <div class="cc-footer"><div style="display:flex;align-items:center;"><div class="cc-avs"><div class="cc-av" style="background:#FAEEDA;color:#854F0B;">JW</div><div class="cc-av" style="background:var(--cream);color:var(--navy);">+7</div></div><span class="cc-cnt">8/12</span></div><button class="btn btn-sm btn-gold" onclick="openModal('m-join-circle')">Request</button></div>
+      </div>
+      <div class="circle-card">
+        <div class="cc-top"><div class="cc-icon">&#10022;</div><span class="tag tag-gold">Premium</span></div>
+        <div class="cc-name">Ex-McKinsey & Big 3</div>
+        <div class="cc-desc">Strategy alumni network. Cross-industry introductions and consulting pipeline for independents.</div>
+        <div class="cc-footer"><div style="display:flex;align-items:center;"><div class="cc-avs"><div class="cc-av" style="background:#E6F1FB;color:#185FA5;">DM</div><div class="cc-av" style="background:var(--cream);color:var(--navy);">+9</div></div><span class="cc-cnt">10/12</span></div><button class="btn btn-sm btn-gold" onclick="openModal('m-join-circle')">Request</button></div>
+      </div>
+      <div class="circle-card">
+        <div class="cc-top"><div class="cc-icon">&#9673;</div><span class="tag">3 spots</span></div>
+        <div class="cc-name">Fortune 500 CHRO Network</div>
+        <div class="cc-desc">Senior HR leaders. Executive coaching, talent strategy, and C-suite search referrals.</div>
+        <div class="cc-footer"><div style="display:flex;align-items:center;"><div class="cc-avs"><div class="cc-av" style="background:#FBEAF0;color:#993556;">BK</div><div class="cc-av" style="background:var(--cream);color:var(--navy);">+6</div></div><span class="cc-cnt">7/12</span></div><button class="btn btn-sm btn-gold" onclick="openModal('m-join-circle')">Request</button></div>
+      </div>
+      <button class="btn btn-full" style="margin-top:4px;" onclick="openModal('m-create-circle')">+ Create a Circle</button>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="ascreen" id="as-profile">
+    <div class="content">
+      <div class="profile-hero">
+        <div class="ph-top">
+          <div class="av av-lg" style="background:var(--gold);color:var(--navy);border:3px solid rgba(201,168,76,0.3);">MK</div>
+          <div style="flex:1;min-width:0;">
+            <div class="ph-name">Margaret Kessler</div>
+            <div class="ph-hl">Former CMO, Williams-Sonoma &middot; Board Director &middot; Fractional</div>
+            <div class="ph-loc">&#10009; San Francisco &middot; Open to Remote</div>
+            <div class="ph-badges"><span class="ph-badge">Board</span><span class="ph-badge">Fractional</span><span class="ph-badge">Advisory</span><span class="ph-badge">Consumer</span></div>
+          </div>
+          <div class="score-box"><div class="score-num">847</div><div class="score-lbl">Trust Score</div><div class="score-pct">Top 12%</div></div>
+        </div>
+        <div class="ph-stats">
+          <div><div class="ph-stat-val">28</div><div class="ph-stat-lbl">Yrs exp</div></div>
+          <div><div class="ph-stat-val">4</div><div class="ph-stat-lbl">Intros made</div></div>
+          <div><div class="ph-stat-val">2</div><div class="ph-stat-lbl">Circles</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><div class="card-title" style="margin:0">Career Identity</div><button class="btn btn-sm">Edit</button></div>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:14px;">Consumer brand executive with 28 years building iconic retail brands. Former CMO at Williams-Sonoma leading $1.2B in digital revenue. Now advising growth-stage companies and sitting on two boards.</p>
+        <hr class="div">
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Career Highlights</div>
+        <div class="exp-item"><div class="exp-hdr"><div><div class="exp-title">Chief Marketing Officer</div><div class="exp-co">Williams-Sonoma, Inc.</div></div><div class="exp-yrs">2014&ndash;2022</div></div><div class="exp-impact">Led brand strategy across WSM, Pottery Barn, West Elm. Drove $1.2B in digital revenue. D2C from 18% to 54%.</div></div>
+        <div class="exp-item"><div class="exp-hdr"><div><div class="exp-title">SVP Marketing</div><div class="exp-co">Gap Inc.</div></div><div class="exp-yrs">2008&ndash;2014</div></div><div class="exp-impact">Owned P&L for Old Navy brand marketing ($900M budget). Led loyalty for 30M+ customers.</div></div>
+        <div class="exp-item"><div class="exp-hdr"><div><div class="exp-title">VP Brand Marketing</div><div class="exp-co">Levi Strauss &amp; Co.</div></div><div class="exp-yrs">2002&ndash;2008</div></div><div class="exp-impact">Repositioned Levi&rsquo;s 501 globally. 22-country campaign, 18% lift in brand awareness.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Domain Authority</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;"><span class="tag tag-gold">Consumer Brands</span><span class="tag tag-gold">Retail</span><span class="tag tag-gold">D2C</span><span class="tag">HealthTech</span><span class="tag">PE-backed</span><span class="tag">Brand Strategy</span><span class="tag">Board Governance</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Open to</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;"><span class="sdot sdot-on"></span><span style="font-size:13px;">Board seats</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span class="sdot sdot-on"></span><span style="font-size:13px;">Fractional CMO (2 days/wk)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span class="sdot sdot-on"></span><span style="font-size:13px;">Advisory (2&ndash;3 companies)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span class="sdot sdot-off"></span><span style="font-size:13px;color:var(--text-muted);">Full-time (not seeking)</span></div>
+        </div>
+        <hr class="div">
+        <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Network Score Breakdown</div>
+        <div class="score-bar-row"><span style="color:var(--text-secondary);font-size:12px;">Introduction quality</span><span style="font-weight:600;color:var(--gold);font-size:12px;">94/100</span></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:94%;background:var(--gold);"></div></div>
+        <div class="score-bar-row"><span style="color:var(--text-secondary);font-size:12px;">Profile completeness</span><span style="font-weight:600;color:var(--navy);font-size:12px;">88/100</span></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:88%;background:var(--navy);"></div></div>
+        <div class="score-bar-row"><span style="color:var(--text-secondary);font-size:12px;">Circle engagement</span><span style="font-weight:600;color:var(--navy);font-size:12px;">76/100</span></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:76%;background:var(--navy);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCIERGE -->
+  <div class="ascreen" id="as-concierge">
+    <div id="api-banner-wrap">
+      <div class="api-banner" id="api-banner">
+        <div>&#10022; Enter your Anthropic API key for live AI responses</div>
+        <div class="api-banner-row">
+          <input type="password" id="api-key-input" placeholder="sk-ant-..."/>
+          <button onclick="saveApiKey()">Activate</button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-wrap" id="chat-wrap" style="height:calc(100vh - 52px - var(--bottom-nav-h) - 70px)">
+      <div class="quick-prompts">
+        <button class="qprompt" onclick="usePrompt(this)">Position me for a board seat</button>
+        <button class="qprompt" onclick="usePrompt(this)">Draft a fractional CMO pitch</button>
+        <button class="qprompt" onclick="usePrompt(this)">Advisory comp benchmarks</button>
+        <button class="qprompt" onclick="usePrompt(this)">Prep for PE firm intro call</button>
+        <button class="qprompt" onclick="usePrompt(this)">Review my profile</button>
+      </div>
+      <div class="chat-msgs" id="chat-messages">
+        <div class="msg msg-ai"><div class="msg-av" style="background:var(--navy);color:var(--gold);">&#10022;</div><div class="msg-bubble">Hello Margaret. I&rsquo;m your Proven Concierge &mdash; built for where you are in your career, not where you started.<br><br>I can help with board positioning, fractional outreach, compensation benchmarking, or interview prep. What&rsquo;s on your mind?</div></div>
+      </div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input" placeholder="Ask me anything&hellip;" rows="1" onkeydown="handleChatKey(event)"></textarea>
+        <button class="send-btn" onclick="sendChat()">&#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN (hidden tab, accessible via more menu) -->
+  <div class="ascreen" id="as-admin">
+    <div class="content">
+      <div class="admin-stat-row">
+        <div class="admin-stat"><div class="admin-stat-val">483</div><div class="admin-stat-lbl">Members</div><div style="font-size:11px;color:#48BB78;margin-top:4px;">&#8593; 47 this month</div></div>
+        <div class="admin-stat"><div class="admin-stat-val">38</div><div class="admin-stat-lbl">Pending</div><div style="font-size:11px;color:#ECC94B;margin-top:4px;">12 need review</div></div>
+        <div class="admin-stat"><div class="admin-stat-val">127</div><div class="admin-stat-lbl">Intros / mo</div><div style="font-size:11px;color:#48BB78;margin-top:4px;">&#8593; 23%</div></div>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px;">Pending Applications</div>
+      <div class="pending-card"><div class="pending-top"><div class="av av-md" style="background:#E6F1FB;color:#185FA5;">JT</div><div><div style="font-weight:500;font-size:13px;">James Turner</div><div style="font-size:11px;color:var(--text-muted);">Former CFO, Clorox</div></div></div><div class="pending-meta"><span class="tag tag-navy">via Lawrence Chen</span><span class="tag tag-gold">Board</span><span class="tag">Finance &middot; PE</span></div><div class="pending-actions"><button class="btn btn-sm btn-gold" onclick="adminApprove(this)">Approve</button><button class="btn btn-sm" onclick="this.closest('.pending-card').style.opacity='0.3'">Decline</button></div></div>
+      <div class="pending-card"><div class="pending-top"><div class="av av-md" style="background:#EAF3DE;color:#3B6D11;">AP</div><div><div style="font-weight:500;font-size:13px;">Angela Park</div><div style="font-size:11px;color:var(--text-muted);">Ex-BCG Partner</div></div></div><div class="pending-meta"><span class="tag tag-navy">via David Marsh</span><span class="tag tag-blue">Fractional</span><span class="tag">Strategy &middot; HealthTech</span></div><div class="pending-actions"><button class="btn btn-sm btn-gold" onclick="adminApprove(this)">Approve</button><button class="btn btn-sm" onclick="this.closest('.pending-card').style.opacity='0.3'">Decline</button></div></div>
+      <div class="pending-card"><div class="pending-top"><div class="av av-md" style="background:#FAEEDA;color:#854F0B;">RN</div><div><div style="font-weight:500;font-size:13px;">Robert Nakamura</div><div style="font-size:11px;color:var(--text-muted);">CTO, 2 exits &middot; AI</div></div></div><div class="pending-meta"><span class="tag tag-navy">via Priya Kumar</span><span class="tag tag-navy">Advisory</span><span class="tag">Tech &middot; AI/ML</span></div><div class="pending-actions"><button class="btn btn-sm btn-gold" onclick="adminApprove(this)">Approve</button><button class="btn btn-sm" onclick="this.closest('.pending-card').style.opacity='0.3'">Decline</button></div></div>
+      <div class="pending-card"><div class="pending-top"><div class="av av-md" style="background:#FBEAF0;color:#993556;">SL</div><div><div style="font-weight:500;font-size:13px;">Sandra Lee</div><div style="font-size:11px;color:var(--text-muted);">CHRO, Fortune 100</div></div></div><div class="pending-meta"><span class="tag tag-navy">via Susan Reyes</span><span class="tag tag-gold">Board</span><span class="tag">HR &middot; Talent</span></div><div class="pending-actions"><button class="btn btn-sm btn-gold" onclick="adminApprove(this)">Approve</button><button class="btn btn-sm" onclick="this.closest('.pending-card').style.opacity='0.3'">Decline</button></div></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bnav-item active" id="bn-home" onclick="switchTab('home')"><span class="bnav-icon">&#11041;</span><span class="bnav-label">Home</span></button>
+    <button class="bnav-item" id="bn-opportunities" onclick="switchTab('opportunities')"><span class="bnav-icon">&#9672;</span><span class="bnav-label">Opps</span><span class="bnav-badge">7</span></button>
+    <button class="bnav-item" id="bn-intros" onclick="switchTab('intros')"><span class="bnav-icon">&#8651;</span><span class="bnav-label">Intros</span><span class="bnav-badge">3</span></button>
+    <button class="bnav-item" id="bn-circles" onclick="switchTab('circles')"><span class="bnav-icon">&#9678;</span><span class="bnav-label">Circles</span></button>
+    <button class="bnav-item" id="bn-profile" onclick="switchTab('profile')"><span class="bnav-icon">&#9673;</span><span class="bnav-label">Profile</span></button>
+    <button class="bnav-item" id="bn-concierge" onclick="switchTab('concierge')"><span class="bnav-icon">&#10022;</span><span class="bnav-label">AI</span></button>
+  </nav>
+</div>
+
+<!-- ════ MODALS ════ -->
+<div class="modal-overlay" id="m-invite"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-invite')">&#10005;</button><div class="modal-title">Invite to Proven</div><div class="modal-sub">Every member you invite reflects on your reputation.</div><div class="form-grp"><label class="form-lbl">Their name</label><input class="form-inp" placeholder="Full name"/></div><div class="form-grp"><label class="form-lbl">Their email</label><input class="form-inp" placeholder="colleague@company.com" type="email"/></div><div class="form-grp"><label class="form-lbl">Why are you vouching for them?</label><textarea class="form-ta" placeholder="We worked together at Gap Inc. for 6 years..."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-invite')">Cancel</button><button class="btn btn-gold" onclick="closeModal('m-invite')">Send Invitation</button></div></div></div>
+
+<div class="modal-overlay" id="m-interest"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-interest')">&#10005;</button><div class="modal-title">Express Interest</div><div class="modal-sub">Your note goes to the posting member. They&rsquo;ll decide whether to connect you directly or via a warm intro.</div><div class="form-grp"><label class="form-lbl">Why are you a fit?</label><textarea class="form-ta" placeholder="In 2&ndash;3 sentences, why this role aligns with your background..."></textarea></div><div class="form-grp"><label class="form-lbl">Preferred next step</label><select class="form-sel"><option>30-minute call</option><option>Exchange bios first</option><option>Async intro message</option></select></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-interest')">Cancel</button><button class="btn btn-gold" onclick="closeModal('m-interest')">Submit Interest</button></div></div></div>
+
+<div class="modal-overlay" id="m-intro-req"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-intro-req')">&#10005;</button><div class="modal-title">Request an Introduction</div><div class="modal-sub">Double opt-in only. Both parties confirm before any connection is made.</div><div class="form-grp"><label class="form-lbl">Who would you like to meet?</label><input class="form-inp" placeholder="Search members by name or role&hellip;"/></div><div class="form-grp"><label class="form-lbl">Who can connect you?</label><input class="form-inp" placeholder="Who in your network knows them?"/></div><div class="form-grp"><label class="form-lbl">Why this intro makes sense</label><textarea class="form-ta" placeholder="Context for the connector..."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-intro-req')">Cancel</button><button class="btn btn-gold" onclick="closeModal('m-intro-req')">Send Request</button></div></div></div>
+
+<div class="modal-overlay" id="m-join-circle"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-join-circle')">&#10005;</button><div class="modal-title">Request Circle Access</div><div class="modal-sub">Circle leads review all requests. Premium circles require a paid subscription.</div><div class="form-grp"><label class="form-lbl">Why do you belong in this circle?</label><textarea class="form-ta" placeholder="Your relevant background and what you&rsquo;d contribute..."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-join-circle')">Cancel</button><button class="btn btn-gold" onclick="closeModal('m-join-circle')">Submit Request</button></div></div></div>
+
+<div class="modal-overlay" id="m-create-circle"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-create-circle')">&#10005;</button><div class="modal-title">Create a Circle</div><div class="modal-sub">Max 12 members. Proven staff reviews all new circles before launch.</div><div class="form-grp"><label class="form-lbl">Circle name</label><input class="form-inp" placeholder="e.g. West Coast VC CFOs"/></div><div class="form-grp"><label class="form-lbl">Focus / sector</label><input class="form-inp" placeholder="e.g. FinTech &middot; Late-stage &middot; Ops leaders"/></div><div class="form-grp"><label class="form-lbl">Who should join?</label><textarea class="form-ta" placeholder="Describe the ideal member profile..."></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-create-circle')">Cancel</button><button class="btn btn-gold" onclick="closeModal('m-create-circle')">Submit for Review</button></div></div></div>
+
+<div class="modal-overlay" id="m-post-opp"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-post-opp')">&#10005;</button><div class="modal-title">Post an Opportunity</div><div class="modal-sub">Visible only to vetted Proven members.</div><div class="form-grp"><label class="form-lbl">Type</label><select class="form-sel"><option>Board Seat</option><option>Fractional Role</option><option>Advisory</option><option>C-Suite / Full-time</option><option>Consulting</option></select></div><div class="form-grp"><label class="form-lbl">Title</label><input class="form-inp" placeholder="e.g. Independent Board Director"/></div><div class="form-grp"><label class="form-lbl">Company (or Confidential)</label><input class="form-inp" placeholder="Company or &lsquo;Confidential&rsquo;"/></div><div class="form-grp"><label class="form-lbl">Description</label><textarea class="form-ta" placeholder="Role scope, ideal background, compensation&hellip;"></textarea></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-post-opp')">Cancel</button><button class="btn btn-gold" onclick="closeModal('m-post-opp')">Post Opportunity</button></div></div></div>
+
+<div class="modal-overlay" id="m-opp"><div class="modal"><div class="modal-handle"></div><button class="modal-close" onclick="closeModal('m-opp')">&#10005;</button><div class="modal-title">Board Director &mdash; Audit Committee Chair</div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;"><span class="tag tag-gold">Board</span><span class="tag">Confidential</span><span class="tag">SF / Remote</span></div><div style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:14px;">Seeking an experienced CFO or audit partner for a 60-person digital health company preparing for Series D. 4 meetings/year plus ad-hoc committee calls. Board equity grant (0.15&ndash;0.25%) plus D&O insurance. Company at $12M ARR, growing 40% YoY.</div><div style="background:var(--cream);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;">Ideal background</div><div style="font-size:13px;color:var(--text-secondary);line-height:1.9;">&#10003; CFO or audit partner experience<br>&#10003; Healthcare or SaaS board exp preferred<br>&#10003; Comfortable with Series D and M&amp;A</div></div><div class="modal-footer"><button class="btn" onclick="closeModal('m-opp')">Close</button><button class="btn btn-gold" onclick="closeModal('m-opp');openModal('m-interest')">Express Interest</button></div></div></div>
+
+<script>
+var apiKey='';
+var chatHistory=[];
+var obStep=1;
+var currentTab='home';
+
+function showLanding(){
+  document.getElementById('pg-landing').classList.add('active');
+  document.getElementById('pg-onboarding').classList.remove('active');
+  document.getElementById('pg-app').classList.remove('active');
+}
+function showOnboarding(){
+  document.getElementById('pg-landing').classList.remove('active');
+  document.getElementById('pg-onboarding').classList.add('active');
+  document.getElementById('pg-app').classList.remove('active');
+  document.getElementById('pg-onboarding').scrollTop=0;
+}
+function showApp(){
+  document.getElementById('pg-landing').classList.remove('active');
+  document.getElementById('pg-onboarding').classList.remove('active');
+  document.getElementById('pg-app').classList.add('active');
+  switchTab('home');
+}
+function switchTab(tab){
+  document.querySelectorAll('.ascreen').forEach(function(s){s.classList.remove('active')});
+  var el=document.getElementById('as-'+tab);
+  if(el){el.classList.add('active');}
+  document.querySelectorAll('.bnav-item').forEach(function(b){b.classList.remove('active')});
+  var bn=document.getElementById('bn-'+tab);
+  if(bn){bn.classList.add('active');}
+  currentTab=tab;
+  document.getElementById('pg-app').scrollTop=0;
+  updateChatHeight();
+}
+function obGo(step){
+  document.getElementById('ob'+obStep).style.display='none';
+  obStep=step;
+  document.getElementById('ob'+step).style.display='block';
+  for(var i=1;i<=4;i++){document.getElementById('sd'+i).classList.toggle('done',i<=step);}
+  document.getElementById('pg-onboarding').scrollTop=0;
+}
+function toggleChip(el){el.classList.toggle('sel')}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.addEventListener('click',function(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open')});
+function switchIntroTab(tab,btn){
+  document.querySelectorAll('.tab-btn').forEach(function(t){t.classList.remove('active')});
+  btn.classList.add('active');
+  ['incoming','outgoing','completed'].forEach(function(t){
+    var el=document.getElementById('it-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+}
+function acceptIntro(btn){
+  var card=btn.closest('.intro-card');
+  var acts=card.querySelector('.intro-actions');
+  acts.innerHTML='<span class="istep istep-done" style="font-size:12px;">&#10003; Introduction confirmed &mdash; email on its way</span>';
+  card.querySelectorAll('.istep-pend').forEach(function(s){s.className='istep istep-done';s.textContent='&#10003; Confirmed';});
+}
+function adminApprove(btn){btn.closest('.pending-actions').innerHTML='<span class="tag tag-green">&#10003; Approved</span>'}
+function saveApiKey(){
+  var v=document.getElementById('api-key-input').value.trim();
+  if(v.length>10){
+    apiKey=v;
+    document.getElementById('api-banner').innerHTML='<div style="color:#3B6D11;font-weight:500;">&#10003; AI Concierge activated &mdash; Claude is ready</div>';
+    updateChatHeight();
+  } else {
+    document.getElementById('api-key-input').style.borderColor='#E24B4A';
+  }
+}
+function updateChatHeight(){
+  var banner=document.getElementById('api-banner-wrap');
+  var bh=banner?banner.offsetHeight:0;
+  var wrap=document.getElementById('chat-wrap');
+  if(wrap){
+    var total=window.innerHeight;
+    var topbar=52;
+    var botnav=64;
+    wrap.style.height=(total-topbar-botnav-bh-1)+'px';
+  }
+}
+window.addEventListener('resize',updateChatHeight);
+function usePrompt(el){
+  document.getElementById('chat-input').value=el.textContent.trim();
+  document.getElementById('chat-input').focus();
+}
+function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+async function sendChat(){
+  var input=document.getElementById('chat-input');
+  var text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  appendMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  var typing=appendTyping();
+  if(!apiKey){
+    setTimeout(function(){
+      typing.remove();
+      var demo='I can see you\'re asking about that topic. To get personalized live responses, enter your Anthropic API key in the banner above. Once activated I\'ll provide tailored guidance for your executive career.';
+      appendMsg('ai',demo);
+      chatHistory.push({role:'assistant',content:demo});
+    },1100);
+    return;
+  }
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:800,
+        system:'You are the Proven Concierge, an AI advisor for experienced professionals 45+. Proven is a private invite-only network for warm introductions, trusted circles, and confidential opportunities. Speak peer-to-peer with senior executives. Be warm, direct, specific. Max 3 paragraphs. The member is Margaret Kessler, former CMO Williams-Sonoma, exploring board seats and fractional CMO work in consumer/retail/health-tech.',
+        messages:chatHistory
+      })
+    });
+    typing.remove();
+    if(resp.ok){
+      var data=await resp.json();
+      var reply=data.content.map(function(b){return b.text||''}).join('');
+      appendMsg('ai',reply);
+      chatHistory.push({role:'assistant',content:reply});
+    } else {
+      appendMsg('ai','There was an issue with the API key. Please check it and try again.');
+    }
+  }catch(err){
+    typing.remove();
+    appendMsg('ai','Connection issue — please try again.');
+  }
+}
+function appendMsg(role,text){
+  var msgs=document.getElementById('chat-messages');
+  var div=document.createElement('div');
+  div.className='msg msg-'+(role==='user'?'user':'ai');
+  var avStyle=role==='ai'?'background:var(--navy);color:var(--gold);':'background:var(--gold);color:var(--navy);';
+  var avText=role==='ai'?'&#10022;':'MK';
+  div.innerHTML='<div class="msg-av" style="'+avStyle+'">'+avText+'</div><div class="msg-bubble">'+text.replace(/\n/g,'<br>')+'</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+function appendTyping(){
+  var msgs=document.getElementById('chat-messages');
+  var div=document.createElement('div');
+  div.className='msg msg-ai';
+  div.innerHTML='<div class="msg-av" style="background:var(--navy);color:var(--gold);">&#10022;</div><div class="msg-bubble"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+updateChatHeight();
+</script>
+</body>
+</html>
